@@ -23,7 +23,6 @@
 <section class="panel table-panel">
     <div class="panel-heading">
         <div>
-            <p class="eyebrow">Subscriptions</p>
             <h2>Subscriptions</h2>
         </div>
     </div>
@@ -49,7 +48,7 @@
                         <a class="sort-link" href="{{ url_for('index', sort='next_billing_date', dir='desc' if active_sort == 'next_billing_date' and active_dir == 'asc' else 'asc') }}">Next billing{% if active_sort == 'next_billing_date' %}<span class="sort-indicator">{{ '↑' if active_dir == 'asc' else '↓' }}</span>{% endif %}</a>
                     </th>
                     <th>
-                        <a class="sort-link" href="{{ url_for('index', sort='display_converted', dir='desc' if active_sort == 'display_converted' and active_dir == 'asc' else 'asc') }}">TWD{% if active_sort == 'display_converted' %}<span class="sort-indicator">{{ '↑' if active_dir == 'asc' else '↓' }}</span>{% endif %}</a>
+                        <a class="sort-link" href="{{ url_for('index', sort='display_converted', dir='desc' if active_sort == 'display_converted' and active_dir == 'asc' else 'asc') }}">TWD/M{% if active_sort == 'display_converted' %}<span class="sort-indicator">{{ '↑' if active_dir == 'asc' else '↓' }}</span>{% endif %}</a>
                     </th>
                     <th></th>
                 </tr>

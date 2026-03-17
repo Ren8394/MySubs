@@ -142,7 +142,10 @@ def index():
 
     for sub in subs:
         sub["converted_price"] = sub["price"] / rates.get(sub["currency"], 1.0)
-        sub["display_converted"] = math.ceil(sub["converted_price"])
+        sub["monthly_twd"] = sub["converted_price"]
+        if sub["billing_cycle"] == "yearly":
+            sub["monthly_twd"] = sub["converted_price"] / 12
+        sub["display_converted"] = math.ceil(sub["monthly_twd"])
         next_billing_date = subscription.calculate_next_billing_date(sub, today=today)
         if next_billing_date:
             sub["display_next_billing_date"] = next_billing_date.isoformat()

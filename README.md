@@ -17,6 +17,16 @@ It is designed to be easy to clone, run, and self-host without requiring a manag
 - Highlight what is due this month and what is billing next
 - Edit and delete subscriptions from a single dashboard
 
+## Update log
+
+### 2026-03
+
+- Refined the dashboard into a cleaner local-first interface
+- Added sortable subscription columns and preserved the last selected sort order
+- Improved recurring billing logic so monthly and yearly plans follow calendar dates correctly
+- Changed the TWD table column to show monthly-equivalent cost as `TWD/M`
+- Improved exchange-rate fetching with caching to reduce slow page loads after actions
+
 ## Stack
 
 - Python 3.14+
