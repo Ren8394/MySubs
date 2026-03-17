@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}MySubs{% endblock %}
+
+{% block content %}
+<section class="stats-grid">
+    <article class="stat-card warm">
+        <span class="stat-label">Monthly baseline</span>
+        <strong>NTD {{ display_total_twd }}</strong>
+        <small>USD {{ "%.2f"|format(total_usd) }}</small>
+    </article>
+    <article class="stat-card cool">
+        <span class="stat-label">Due this month</span>
+        <strong>NTD {{ display_due_twd }}</strong>
+        <small>USD {{ "%.2f"|format(due_usd) }}</small>
+    </article>
+    <article class="stat-card neutral">
+        <span class="stat-label">Active subscriptions</span>
+        <strong>{{ subscription_count }}</strong>
+    </article>
+</section>
+
+<section class="panel table-panel">
+    <div class="panel-heading">
+        <div>
+            <p class="eyebrow">Subscriptions</p>
+            <h2>Subscriptions</h2>
+        </div>
+    </div>
+
+    {% if subscriptions %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <a class="sort-link" href="{{ url_for('index', sort='service_name', dir='desc' if active_sort == 'service_name' and active_dir == 'asc' else 'asc') }}">Service{% if active_sort == 'service_name' %}<span class="sort-indicator">{{ '↑' if active_dir == 'asc' else '↓' }}</span>{% endif %}</a>
+                    </th>
+                    <th>
+                        <a class="sort-link" href="{{ url_for('index', sort='plan_name', dir='desc' if active_sort == 'plan_name' and active_dir == 'asc' else 'asc') }}">Plan{% if active_sort == 'plan_name' %}<span class="sort-indicator">{{ '↑' if active_dir == 'asc' else '↓' }}</span>{% endif %}</a>
+                    </th>
+                    <th>
+                        <a class="sort-link" href="{{ url_for('index', sort='price', dir='desc' if active_sort == 'price' and active_dir == 'asc' else 'asc') }}">Price{% if active_sort == 'price' %}<span class="sort-indicator">{{ '↑' if active_dir == 'asc' else '↓' }}</span>{% endif %}</a>
+                    </th>
+                    <th>
+                        <a class="sort-link" href="{{ url_for('index', sort='billing_cycle', dir='desc' if active_sort == 'billing_cycle' and active_dir == 'asc' else 'asc') }}">Cycle{% if active_sort == 'billing_cycle' %}<span class="sort-indicator">{{ '↑' if active_dir == 'asc' else '↓' }}</span>{% endif %}</a>
+                    </th>
+                    <th>
+                        <a class="sort-link" href="{{ url_for('index', sort='next_billing_date', dir='desc' if active_sort == 'next_billing_date' and active_dir == 'asc' else 'asc') }}">Next billing{% if active_sort == 'next_billing_date' %}<span class="sort-indicator">{{ '↑' if active_dir == 'asc' else '↓' }}</span>{% endif %}</a>
+                    </th>
+                    <th>
+                        <a class="sort-link" href="{{ url_for('index', sort='display_converted', dir='desc' if active_sort == 'display_converted' and active_dir == 'asc' else 'asc') }}">TWD{% if active_sort == 'display_converted' %}<span class="sort-indicator">{{ '↑' if active_dir == 'asc' else '↓' }}</span>{% endif %}</a>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in subscriptions %}
+                <tr>
+                    <td>
+                        <strong>{{ sub.service_name }}</strong>
+                    </td>
+                    <td>{{ sub.plan_name or "-" }}</td>
+                    <td>
+                        <span class="currency-chip">{{ sub.currency }}</span>
+                        {{ "%.2f"|format(sub.price) }}
+                    </td>
+                    <td>
+                        <span class="cycle-badge {{ sub.billing_cycle }}">{{ sub.billing_cycle }}</span>
+                    </td>
+                    <td>
+                        {{ sub.next_billing_date }}
+                        <small class="table-note">
+                            {% if sub.days_until_due is none %}
+                            invalid date
+                            {% elif sub.days_until_due < 0 %}
+                            overdue
+                            {% elif sub.days_until_due == 0 %}
+                            today
+                            {% else %}
+                            {{ sub.days_until_due }} days left
+                            {% endif %}
+                        </small>
+                    </td>
+                    <td class="number-cell">{{ sub.display_converted }}</td>
+                    <td>
+                        <div class="actions-cell">
+                            <a class="table-link" href="{{ url_for('edit', id=sub.id) }}">Edit</a>
+                            <form method="post" action="{{ url_for('delete', id=sub.id) }}" onsubmit="return confirm('Delete this subscription?');">
+                                <button class="table-link danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>No subscriptions yet</h3>
+        <p>Start by adding Netflix, Spotify, iCloud, or any recurring payment you want to monitor.</p>
+        <a class="primary-button" href="{{ url_for('add') }}">Add your first subscription</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

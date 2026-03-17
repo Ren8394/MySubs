@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Add Subscription{% endblock %}
+
+{% block content %}
+<section class="form-shell">
+    <div class="form-intro">
+        <p class="eyebrow">New entry</p>
+        <h1>Add a subscription</h1>
+        <p>Track a new recurring charge with its billing cycle, original currency, and next renewal date.</p>
+    </div>
+
+    <form class="form-card" method="post">
+        {% if error_message %}
+        <div class="alert-banner">{{ error_message }}</div>
+        {% endif %}
+
+        <div class="field-grid">
+            <label>
+                <span>Service name</span>
+                <input type="text" name="service_name" placeholder="Netflix" value="{{ form_values.service_name }}" required>
+            </label>
+            <label>
+                <span>Plan name</span>
+                <input type="text" name="plan_name" placeholder="Premium" value="{{ form_values.plan_name }}">
+            </label>
+            <label>
+                <span>Price</span>
+                <input type="number" step="0.01" min="0" inputmode="decimal" name="price" placeholder="9.99" value="{{ form_values.price }}" required>
+            </label>
+            <label>
+                <span>Currency</span>
+                <select name="currency" required>
+                    <option value="TWD" {% if form_values.currency == 'TWD' %}selected{% endif %}>TWD</option>
+                    <option value="USD" {% if form_values.currency == 'USD' %}selected{% endif %}>USD</option>
+                    <option value="EUR" {% if form_values.currency == 'EUR' %}selected{% endif %}>EUR</option>
+                    <option value="JPY" {% if form_values.currency == 'JPY' %}selected{% endif %}>JPY</option>
+                </select>
+            </label>
+            <label>
+                <span>Billing cycle</span>
+                <select name="billing_cycle" required>
+                    <option value="monthly" {% if form_values.billing_cycle == 'monthly' %}selected{% endif %}>Monthly</option>
+                    <option value="yearly" {% if form_values.billing_cycle == 'yearly' %}selected{% endif %}>Yearly</option>
+                </select>
+            </label>
+            <label>
+                <span>Next billing date</span>
+                <input type="date" name="next_billing_date" value="{{ form_values.next_billing_date }}" required>
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <a class="ghost-button" href="{{ url_for('index') }}">Cancel</a>
+            <button class="primary-button" type="submit">Save subscription</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

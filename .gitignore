@@ -1,0 +1,15 @@
+# Custom
+mysubs.db
+.env
+.venv/
+.DS_Store
+
+# Ignore Python compiled files
+*.pyc
+*.pyo
+
+# Ignore Python bytecode files.
+__pycache__/ 
+
+# Ignore uv build files
+build/
