@@ -57,6 +57,9 @@ MYSUBS_DB_PATH=./data/mysubs.db uv run python init_db.py
 MYSUBS_DB_PATH=./data/mysubs.db uv run python main.py
 ```
 
+For local development, the app uses a default Flask secret key.
+If you deploy it anywhere shared, set `MYSUBS_SECRET_KEY` yourself.
+
 ## Resetting the database
 
 If you want to recreate the table from scratch, run:

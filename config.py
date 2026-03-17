@@ -4,6 +4,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).parent
 DEFAULT_DB_PATH = BASE_DIR / "mysubs.db"
+DEFAULT_SECRET_KEY = "dev-local-secret-key"
 
 
 def get_database_path() -> Path:
@@ -15,3 +16,7 @@ def get_database_path() -> Path:
     if not db_path.is_absolute():
         db_path = BASE_DIR / db_path
     return db_path
+
+
+def get_secret_key() -> str:
+    return os.getenv("MYSUBS_SECRET_KEY", DEFAULT_SECRET_KEY)

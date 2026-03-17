@@ -85,8 +85,8 @@
                     <td class="number-cell">{{ sub.display_converted }}</td>
                     <td>
                         <div class="actions-cell">
-                            <a class="table-link" href="{{ url_for('edit', id=sub.id) }}">Edit</a>
-                            <form method="post" action="{{ url_for('delete', id=sub.id) }}" onsubmit="return confirm('Delete this subscription?');">
+                            <a class="table-link" href="{{ url_for('edit', id=sub.id, **sort_params) }}">Edit</a>
+                            <form method="post" action="{{ url_for('delete', id=sub.id, **sort_params) }}" onsubmit="return confirm('Delete this subscription?');">
                                 <button class="table-link danger" type="submit">Delete</button>
                             </form>
                         </div>

@@ -51,7 +51,7 @@
         </div>
 
         <div class="form-actions">
-            <a class="ghost-button" href="{{ url_for('index') }}">Cancel</a>
+            <a class="ghost-button" href="{{ url_for('index', **sort_params) }}">Cancel</a>
             <button class="primary-button" type="submit">Save subscription</button>
         </div>
     </form>

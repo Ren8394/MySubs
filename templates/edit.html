@@ -51,7 +51,7 @@
         </div>
 
         <div class="form-actions">
-            <a class="ghost-button" href="{{ url_for('index') }}">Back</a>
+            <a class="ghost-button" href="{{ url_for('index', **sort_params) }}">Back</a>
             <button class="primary-button" type="submit">Update subscription</button>
         </div>
     </form>
