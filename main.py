@@ -14,7 +14,7 @@ SORTABLE_COLUMNS = {
     "plan_name": "plan_name",
     "price": "price",
     "billing_cycle": "billing_cycle",
-    "next_billing_date": "next_billing_date",
+    "next_billing_date": "display_next_billing_date",
     "display_converted": "display_converted",
 }
 
@@ -103,17 +103,17 @@ def index():
     for sub in subs:
         sub["converted_price"] = sub["price"] / rates.get(sub["currency"], 1.0)
         sub["display_converted"] = math.ceil(sub["converted_price"])
-        try:
-            next_billing_date = datetime.strptime(
-                sub["next_billing_date"], "%Y-%m-%d"
-            ).date()
+        next_billing_date = subscription.calculate_next_billing_date(sub, today=today)
+        if next_billing_date:
+            sub["display_next_billing_date"] = next_billing_date.isoformat()
             sub["days_until_due"] = (next_billing_date - today).days
-        except ValueError:
+        else:
+            sub["display_next_billing_date"] = "Invalid date"
             sub["days_until_due"] = None
 
     active_sort, active_dir = sort_subscriptions(subs, sort_key, sort_dir)
     total_twd = subscription.calculate_monthly_total(rates=rates)
-    due_twd = subscription.calculate_current_month_due(rates=rates)
+    due_twd = subscription.calculate_current_month_due(rates=rates, today=today)
     total_usd = total_twd * rates.get("USD", 0.032)
     due_usd = due_twd * rates.get("USD", 0.032)
 

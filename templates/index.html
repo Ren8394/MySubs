@@ -69,7 +69,7 @@
                         <span class="cycle-badge {{ sub.billing_cycle }}">{{ sub.billing_cycle }}</span>
                     </td>
                     <td>
-                        {{ sub.next_billing_date }}
+                        {{ sub.display_next_billing_date }}
                         <small class="table-note">
                             {% if sub.days_until_due is none %}
                             invalid date

@@ -1,5 +1,6 @@
 import sqlite3
-from datetime import datetime
+from calendar import monthrange
+from datetime import date, datetime
 from time import time
 
 import requests
@@ -120,6 +121,52 @@ def delete_subscription(subscription_id):
 
 # Utility Functions
 ###############################
+def parse_billing_date(raw_date):
+    try:
+        return datetime.strptime(raw_date, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+
+def build_billing_date(year, month, anchor_day):
+    target_day = min(anchor_day, monthrange(year, month)[1])
+    return date(year, month, target_day)
+
+
+def add_months(source_date, months, anchor_day=None):
+    target_month_index = source_date.month - 1 + months
+    target_year = source_date.year + target_month_index // 12
+    target_month = target_month_index % 12 + 1
+    target_day = anchor_day or source_date.day
+    return build_billing_date(target_year, target_month, target_day)
+
+
+def calculate_next_billing_date(subscription_record, today=None):
+    today = today or date.today()
+    base_date = parse_billing_date(subscription_record["next_billing_date"])
+    if not base_date:
+        return None
+
+    if base_date >= today:
+        return base_date
+
+    billing_cycle = subscription_record.get("billing_cycle")
+    next_date = base_date
+    anchor_day = base_date.day
+
+    if billing_cycle == "monthly":
+        while next_date < today:
+            next_date = add_months(next_date, 1, anchor_day=anchor_day)
+        return next_date
+
+    if billing_cycle == "yearly":
+        while next_date < today:
+            next_date = add_months(next_date, 12, anchor_day=anchor_day)
+        return next_date
+
+    return base_date
+
+
 def calculate_monthly_total(rates=None):
     """Calculate the total monthly cost of all subscriptions in TWD."""
     subscriptions = get_subscriptions()
@@ -139,9 +186,10 @@ def calculate_monthly_total(rates=None):
     return twd_total
 
 
-def calculate_current_month_due(rates=None):
+def calculate_current_month_due(rates=None, today=None):
     """Calculate the total due for the current month in TWD."""
-    now = datetime.now()
+    today = today or date.today()
+    now = datetime.combine(today, datetime.min.time())
     current_year = now.year
     current_month = now.month
 
@@ -149,12 +197,10 @@ def calculate_current_month_due(rates=None):
     rates = rates or get_exchange_rates()
     twd_due = 0.0
     for sub in subscriptions:
-        try:
-            next_date = datetime.strptime(sub["next_billing_date"], "%Y-%m-%d")
-            if next_date.year == current_year and next_date.month == current_month:
-                price_in_twd = sub["price"] / rates.get(sub["currency"], 1.0)
-                twd_due += price_in_twd
-        except ValueError:
-            # Invalid date format, skip
+        next_date = calculate_next_billing_date(sub, today=today)
+        if not next_date:
             continue
+        if next_date.year == current_year and next_date.month == current_month:
+            price_in_twd = sub["price"] / rates.get(sub["currency"], 1.0)
+            twd_due += price_in_twd
     return twd_due
